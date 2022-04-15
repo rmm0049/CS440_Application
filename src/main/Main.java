@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -51,6 +52,7 @@ public class Main {
 			
 			//Action listeners for buttons
 			registerCustomerButton.addActionListener(registerCustomer);
+			newEmpButton.addActionListener(newEmployee);
 			
 			frame.getContentPane().add(BorderLayout.WEST,panel);
 			frame.setVisible(true);
@@ -61,7 +63,19 @@ public class Main {
 		}
 	}
 	
-	static ActionListener registerCustomer = new ActionListener() {
+	public static ActionListener newEmployee = new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JFrame newEmployeeFrame = new JFrame("Register New Customer");
+			newEmployeeFrame.setSize(600,400);
+			JPanel newEmployeePanel = new JPanel();
+			
+			newEmployeeFrame.setVisible(true);
+		}
+	};
+	
+	public static ActionListener registerCustomer = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JFrame registerCustomerFrame = new JFrame("Register New Customer");
@@ -75,6 +89,7 @@ public class Main {
 			JTextField mem_id = new JTextField(10);
 			JTextField start_date = new JTextField(10);
 			JTextField exp_date = new JTextField(10);
+			JTextField e_id = new JTextField(10);
 			JTextField mem_type = new JTextField(10);
 			
 			// Labels
@@ -84,6 +99,7 @@ public class Main {
 			JLabel mem_id_label = new JLabel("Member ID");
 			JLabel start_date_label = new JLabel("Start Date");
 			JLabel exp_date_label = new JLabel("Expiration Date");
+			JLabel e_id_label = new JLabel("Trainer EID");
 			JLabel mem_type_label = new JLabel("Membership Type");
 			
 			JButton submit = new JButton("Submit");
@@ -101,6 +117,8 @@ public class Main {
 			registerCustomerPanel.add(start_date);
 			registerCustomerPanel.add(exp_date_label);
 			registerCustomerPanel.add(exp_date);
+			registerCustomerPanel.add(e_id_label);
+			registerCustomerPanel.add(e_id);
 			registerCustomerPanel.add(mem_type_label);
 			registerCustomerPanel.add(mem_type);
 			
@@ -118,6 +136,32 @@ public class Main {
 						PreparedStatement prep = con.prepareStatement(query);
 						
 						
+						if (fname.getText().isEmpty()
+								|| lname.getText().isEmpty()
+								|| mem_id.getText().isEmpty()
+								|| mem_type.getText().isEmpty()) {
+							JOptionPane.showMessageDialog(null, "Last Name, mem_id, and mem_type cannot be null!","Error", JOptionPane.PLAIN_MESSAGE);
+						} else {
+							prep.setString(1, fname.getText());
+							prep.setString(2, minitial.getText());
+							prep.setString(3, lname.getText());
+							prep.setString(4, mem_id.getText());
+							prep.setString(5, start_date.getText());
+							prep.setString(6, exp_date.getText());
+							prep.setString(7, e_id.getText());
+							prep.setString(8, mem_type.getText());
+							
+							try {
+								final int count = prep.executeUpdate();
+								registerCustomerFrame.dispose();
+								JOptionPane.showMessageDialog(null, "Successfully added new customer!","Success", JOptionPane.PLAIN_MESSAGE);
+							}
+							catch (SQLException sqle) {
+								System.err.println(sqle.getMessage());
+							}
+							
+						}
+						
 						
 					} catch (SQLException e1) {
 						e1.printStackTrace();
@@ -128,7 +172,6 @@ public class Main {
 			};
 			
 			submit.addActionListener(submitCustomerRegister);
-			
 			registerCustomerPanel.add(submit);
 			registerCustomerFrame.getContentPane().add(registerCustomerPanel);
 			
@@ -136,7 +179,6 @@ public class Main {
 			
 		}
 	};
-	
 	
 	
 }

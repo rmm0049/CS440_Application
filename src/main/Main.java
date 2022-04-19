@@ -2,7 +2,7 @@ package main;
 
 import static helpers.Configuration.JDBC_URL;
 
-import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
@@ -42,16 +42,29 @@ public class Main {
 			JButton registerCustomerButton = new JButton("Register New Customer");
 			JButton newEmpButton = new JButton("Add New Employee");
 			JButton newClassButton = new JButton("Add New Class");
-			panel.add(registerCustomerButton);
-			panel.add(newEmpButton);
-			panel.add(newClassButton);
+			frame.add(registerCustomerButton);
+			frame.add(newEmpButton);
+			frame.add(newClassButton);
+			frame.add(new JButton("filler"));
+			
+			frame.add(new JButton("filler"));
+			frame.add(new JButton("filler"));
+			frame.add(new JButton("filler"));
+			frame.add(new JButton("filler"));
+			
+			frame.add(new JButton("filler"));
+			frame.add(new JButton("filler"));
+			frame.add(new JButton("filler"));
+			frame.add(new JButton("filler"));
+			
 			
 			//Action listeners for buttons
 			registerCustomerButton.addActionListener(Listeners.registerCustomer);
 			newEmpButton.addActionListener(Listeners.newEmployee);
 			newClassButton.addActionListener(Listeners.addNewClass);
 			
-			frame.getContentPane().add(BorderLayout.WEST,panel);
+			frame.setLayout(new GridLayout(3,4));
+//			frame.add(panel);
 			frame.setVisible(true);
 			
 		

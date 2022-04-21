@@ -358,7 +358,7 @@ public class Listeners {
 				    }
 					
 				    //grabs all the cells of the table
-					String[][] data = new String [20][columnCount]; //hard-coded for a max of 20 rows for now
+					String[][] data = new String [20][columnCount]; //hard-coded for a max of 50 rows for now
 					int rowCount = 0;
 					while (rs.next()) {
 						System.out.print(", currRow: " + rowCount);
@@ -368,9 +368,17 @@ public class Listeners {
 						rowCount++;
 					}
 					
+					//trims off the unused space in the data so printing is cleaner
+					String[][] dataTrimmed = new String [rowCount][columnCount]; 
+					for(int i = 0; i < rowCount; i++) {
+						for (int j = 1; j <= columnCount; j++) {
+							dataTrimmed[i][j-1] = data[i][j-1];
+						}
+					}
+					
 					//making the table from the collected data from the SQL query
 					
-					JTable table = new JTable(data, columnNames);
+					JTable table = new JTable(dataTrimmed, columnNames);
 					table.setBounds(30, 40, 700, 450);
 					
 					viewEquipmentPanel.setLayout(new BorderLayout());

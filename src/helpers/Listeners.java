@@ -2,19 +2,28 @@ package helpers;
 
 import static helpers.Configuration.JDBC_URL;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.*;
+
+//import net.proteanit.sql.DbUtils;
 
 public class Listeners {
 
@@ -43,6 +52,7 @@ public class Listeners {
 			JLabel manager_eid_label = new JLabel("Manager EID");
 
 			JButton submit = new JButton("Submit");
+			
 
 			newEmployeePanel.add(fname_label);
 			newEmployeePanel.add(fname);
@@ -311,6 +321,90 @@ public class Listeners {
 
 			newEquipmentFrame.add(newEquipmentPanel);
 			newEquipmentFrame.setVisible(true);
+		}
+	};
+	
+	public static ActionListener viewEquipment = new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JFrame viewEquipmentFrame = new JFrame("View Equipment");
+			viewEquipmentFrame.setSize(850, 800);
+			JPanel viewEquipmentPanel = new JPanel();
+			
+//	        JButton back = new JButton("Back"); //back button at the bottom of the screen
+
+			// Submit INSERT query for new customer
+			String query = "SELECT * FROM EQUIPMENT\r\n";
+
+			Connection con;
+			try {
+				con = DriverManager.getConnection(JDBC_URL, "TEAM_ALPHA", "875283");
+				
+				PreparedStatement prep = con.prepareStatement(query);
+				
+				try {
+					ResultSet rs = prep.executeQuery();
+					final ResultSetMetaData meta = rs.getMetaData();
+					
+					//making a list of the column names
+				    int columnCount = meta.getColumnCount();
+				    System.out.println("columnCount: " + columnCount);
+				    String[] columnNames = new String[columnCount];
+				    
+				    for(int i = 1; i <= columnCount; i++) {
+				    	columnNames[i-1] = meta.getColumnName(i);
+				    	System.out.println(columnNames[i-1]);
+				    }
+					
+				    //grabs all the cells of the table
+					String[][] data = new String [20][columnCount]; //hard-coded for a max of 20 rows for now
+					int rowCount = 0;
+					while (rs.next()) {
+						System.out.print(", currRow: " + rowCount);
+						for (int i = 1; i <= columnCount; i++) {
+							data[rowCount][i-1] = (rs.getString(i));
+						}
+						rowCount++;
+					}
+					
+					//making the table from the collected data from the SQL query
+					
+					JTable table = new JTable(data, columnNames);
+					table.setBounds(30, 40, 700, 450);
+					
+					viewEquipmentPanel.setLayout(new BorderLayout());
+					viewEquipmentPanel.add(table);
+					viewEquipmentPanel.add(table.getTableHeader(), BorderLayout.NORTH);
+					viewEquipmentPanel.add(table, BorderLayout.CENTER);
+					
+					 // adding it to JScrollPane
+			        JScrollPane scrollPane = new JScrollPane(viewEquipmentPanel);
+			        viewEquipmentFrame.add(scrollPane);
+			        
+//					viewEquipmentPanel.add(back);
+					
+					ActionListener viewEquipmentBack = new ActionListener() {
+
+						@Override
+						public void actionPerformed(ActionEvent e) {
+//							viewEquipmentFrame.dispose();
+						}
+					};
+
+//					back.addActionListener(viewEquipmentBack);
+
+				} catch (SQLException sqle) {
+					System.err.println(sqle.getMessage());
+				}
+
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+						
+			viewEquipmentFrame.add(viewEquipmentPanel);
+			viewEquipmentFrame.setVisible(true);
+
 		}
 	};
 

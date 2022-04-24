@@ -11,7 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,7 +20,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.*;
 
 //import net.proteanit.sql.DbUtils;
 
@@ -121,6 +119,7 @@ public class Listeners {
 			newEmployeeFrame.setVisible(true);
 		}
 	};
+	
 
 	public static ActionListener registerCustomer = new ActionListener() {
 		@Override
@@ -225,7 +224,79 @@ public class Listeners {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			JFrame newClassFrame = new JFrame("Add New Equipment");
+			newClassFrame.setSize(850, 200);
+			JPanel newClassPanel = new JPanel();
+
+			JTextField type = new JTextField(10);
+			JTextField crn = new JTextField(6);
+			JTextField location = new JTextField(10);
+			JTextField e_id = new JTextField(10);
 			
+
+			JLabel type_label = new JLabel("Type of Class");
+			JLabel crn_label = new JLabel("CRN");
+			JLabel location_label = new JLabel("Location");
+			JLabel e_id_label = new JLabel("Teacher EID");
+	
+			JButton submit = new JButton("Submit");
+
+			newClassPanel.add(type_label);
+			newClassPanel.add(type);
+			newClassPanel.add(crn_label);
+			newClassPanel.add(crn);
+			newClassPanel.add(location_label);
+			newClassPanel.add(location);
+			newClassPanel.add(e_id_label);
+			newClassPanel.add(e_id);
+
+			newClassPanel.add(submit);
+
+			ActionListener submitNewEquipment = new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// Submit INSERT query for new class
+					String query = "INSERT INTO CLASSES\r\n" + "VALUES (?,?,?,?)";
+
+					Connection con;
+					try {
+						con = DriverManager.getConnection(JDBC_URL, "TEAM_ALPHA", "875283");
+						PreparedStatement prep = con.prepareStatement(query);
+
+						if (type.getText().isEmpty() || crn.getText().isEmpty() || location.getText().isEmpty()
+								|| e_id.getText().isEmpty()) {
+							JOptionPane.showMessageDialog(null,
+									"No fields can be empty!", "Error",
+									JOptionPane.PLAIN_MESSAGE);
+						} else {
+							prep.setString(1, type.getText());
+							prep.setString(2, crn.getText());
+							prep.setString(3, location.getText());
+							prep.setString(4, e_id.getText());
+
+							try {
+								final int count = prep.executeUpdate();
+								newClassFrame.dispose();
+								JOptionPane.showMessageDialog(null, "Successfully added new class!", "Success",
+										JOptionPane.PLAIN_MESSAGE);
+							} catch (SQLException sqle) {
+								System.err.println(sqle.getMessage());
+							}
+
+						}
+
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+
+				}
+			};
+
+			submit.addActionListener(submitNewEquipment);
+
+			newClassFrame.add(newClassPanel);
+			newClassFrame.setVisible(true);
 			
 		}
 	};
@@ -322,6 +393,16 @@ public class Listeners {
 			newEquipmentFrame.add(newEquipmentPanel);
 			newEquipmentFrame.setVisible(true);
 		}
+	};
+	
+	public static ActionListener viewEmployees = new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	};
 	
 	public static ActionListener viewEquipment = new ActionListener() {

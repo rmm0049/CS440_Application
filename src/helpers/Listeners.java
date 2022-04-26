@@ -3,6 +3,9 @@ package helpers;
 import static helpers.Configuration.JDBC_URL;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -411,9 +414,9 @@ public class Listeners {
 		public void actionPerformed(ActionEvent e) {
 			JFrame viewEquipmentFrame = new JFrame("View Equipment");
 			viewEquipmentFrame.setSize(850, 800);
-			JPanel viewEquipmentPanel = new JPanel();
+			JPanel viewEquipmentPanel = new JPanel(new BorderLayout());
 			
-//	        JButton back = new JButton("Back"); //back button at the bottom of the screen
+	        JButton back = new JButton("Back"); //back button at the bottom of the screen
 
 			// Submit INSERT query for new customer
 			String query = "SELECT * FROM EQUIPMENT\r\n";
@@ -430,19 +433,16 @@ public class Listeners {
 					
 					//making a list of the column names
 				    int columnCount = meta.getColumnCount();
-				    System.out.println("columnCount: " + columnCount);
 				    String[] columnNames = new String[columnCount];
 				    
 				    for(int i = 1; i <= columnCount; i++) {
 				    	columnNames[i-1] = meta.getColumnName(i);
-				    	System.out.println(columnNames[i-1]);
 				    }
 					
 				    //grabs all the cells of the table
 					String[][] data = new String [20][columnCount]; //hard-coded for a max of 50 rows for now
 					int rowCount = 0;
 					while (rs.next()) {
-						System.out.print(", currRow: " + rowCount);
 						for (int i = 1; i <= columnCount; i++) {
 							data[rowCount][i-1] = (rs.getString(i));
 						}
@@ -462,26 +462,24 @@ public class Listeners {
 					JTable table = new JTable(dataTrimmed, columnNames);
 					table.setBounds(30, 40, 700, 450);
 					
-					viewEquipmentPanel.setLayout(new BorderLayout());
-					viewEquipmentPanel.add(table);
 					viewEquipmentPanel.add(table.getTableHeader(), BorderLayout.NORTH);
 					viewEquipmentPanel.add(table, BorderLayout.CENTER);
+					viewEquipmentPanel.add(back, BorderLayout.SOUTH);
+
 					
 					 // adding it to JScrollPane
 			        JScrollPane scrollPane = new JScrollPane(viewEquipmentPanel);
 			        viewEquipmentFrame.add(scrollPane);
-			        
-//					viewEquipmentPanel.add(back);
-					
+			        					
 					ActionListener viewEquipmentBack = new ActionListener() {
 
 						@Override
 						public void actionPerformed(ActionEvent e) {
-//							viewEquipmentFrame.dispose();
+							viewEquipmentFrame.dispose();
 						}
 					};
 
-//					back.addActionListener(viewEquipmentBack);
+					back.addActionListener(viewEquipmentBack);
 
 				} catch (SQLException sqle) {
 					System.err.println(sqle.getMessage());
@@ -495,6 +493,97 @@ public class Listeners {
 			viewEquipmentFrame.setVisible(true);
 
 		}
+	};
+	
+	public static ActionListener viewClasses = new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JFrame viewClassesFrame = new JFrame("View Classes");
+			viewClassesFrame.setSize(850, 800);
+			JPanel viewClassesPanel = new JPanel(new BorderLayout());
+			
+	        JButton back = new JButton("Back"); //back button at the bottom of the screen
+//	        back.setPreferredSize(new Dimension(5, 5));
+
+			// Submit INSERT query for new customer
+			String query = "SELECT * FROM CLASSES\r\n";
+
+			Connection con;
+			try {
+				con = DriverManager.getConnection(JDBC_URL, "TEAM_ALPHA", "875283");
+				
+				PreparedStatement prep = con.prepareStatement(query);
+				
+				try {
+					ResultSet rs = prep.executeQuery();
+					final ResultSetMetaData meta = rs.getMetaData();
+					
+					//making a list of the column names
+				    int columnCount = meta.getColumnCount();
+				    String[] columnNames = new String[columnCount];
+				    
+				    for(int i = 1; i <= columnCount; i++) {
+				    	columnNames[i-1] = meta.getColumnName(i);
+				    }
+					
+				    //grabs all the cells of the table
+					String[][] data = new String [20][columnCount]; //hard-coded for a max of 50 rows for now
+					int rowCount = 0;
+					while (rs.next()) {
+						for (int i = 1; i <= columnCount; i++) {
+							data[rowCount][i-1] = (rs.getString(i));
+						}
+						rowCount++;
+					}
+					
+					//trims off the unused space in the data so printing is cleaner
+					String[][] dataTrimmed = new String [rowCount][columnCount]; 
+					for(int i = 0; i < rowCount; i++) {
+						for (int j = 1; j <= columnCount; j++) {
+							dataTrimmed[i][j-1] = data[i][j-1];
+						}
+					}
+					
+					//making the table from the collected data from the SQL query
+					
+					JTable table = new JTable(dataTrimmed, columnNames);
+					table.setBounds(30, 40, 700, 450);
+					
+					viewClassesPanel.add(table.getTableHeader(), BorderLayout.NORTH);
+					viewClassesPanel.add(table, BorderLayout.CENTER);
+					viewClassesPanel.add(back, BorderLayout.SOUTH);
+					
+					 // adding it to JScrollPane
+			        JScrollPane scrollPane = new JScrollPane(viewClassesPanel);
+					
+
+			        viewClassesFrame.add(scrollPane);
+					
+					ActionListener viewClassesBack = new ActionListener() {
+
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							viewClassesFrame.dispose();
+						}
+					};
+
+					back.addActionListener(viewClassesBack);
+
+
+
+				} catch (SQLException sqle) {
+					System.err.println(sqle.getMessage());
+				}
+
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+           
+			viewClassesFrame.add(viewClassesPanel);
+			viewClassesFrame.setVisible(true);
+		}
+		
 	};
 
 }

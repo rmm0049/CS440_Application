@@ -47,6 +47,7 @@ public class Main {
 			JButton viewEquipmentButton = new JButton("View Equipment");
 			JButton viewEmployeesButton = new JButton("View Employees");
 			JButton viewClassesButton = new JButton("View Classes");
+			JButton viewEmpScheduleButton = new JButton("View Employee Schedule");
 
 
 			frame.add(registerCustomerButton);
@@ -54,10 +55,10 @@ public class Main {
 			frame.add(newClassButton);
 			frame.add(newEquipmentButton);			
 			frame.add(viewCustomersButton);
-			frame.add(viewClassesButton);
 			frame.add(viewEmployeesButton);
+			frame.add(viewClassesButton);
 			frame.add(viewEquipmentButton);
-			frame.add(new JButton("filler"));
+			frame.add(viewEmpScheduleButton);
 			frame.add(new JButton("filler"));
 			frame.add(new JButton("filler"));
 			frame.add(new JButton("filler"));
@@ -72,7 +73,7 @@ public class Main {
 			viewEquipmentButton.addActionListener(Listeners.viewEquipment);
 			viewEmployeesButton.addActionListener(Listeners.viewEmployees);
 			viewClassesButton.addActionListener(Listeners.viewClasses);
-
+			viewEmpScheduleButton.addActionListener(Listeners.viewEmpSchedule);
 			
 			frame.setLayout(new GridLayout(3,4));
 //			frame.add(panel);

@@ -487,6 +487,112 @@ public class Listeners {
 
 };
 
+public static ActionListener viewEmpSchedule = new ActionListener() {
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+		
+		
+		
+		String dayOfWeek = (String) JOptionPane.showInputDialog(
+				null,
+				"What day of week?",
+				"Choose day",
+				JOptionPane.QUESTION_MESSAGE,
+				null,
+				daysOfWeek,
+				daysOfWeek[0]);
+		
+		String query = "SELECT f_name, l_name, start_time, end_time " +
+						"FROM EMPLOYEES NATURAL JOIN EM_WORK_DAY " + 
+						"WHERE day_of_week='" + dayOfWeek.toLowerCase()+"\'";
+		
+		JFrame frame = new JFrame("View Employee Schedule");
+		frame.setSize(850, 800);
+		JPanel panel = new JPanel();
+		JButton back = new JButton("Back"); //back button at the bottom of the screen
+		
+		Connection con;
+		try {
+			con = DriverManager.getConnection(JDBC_URL, "TEAM_ALPHA", "875283");
+			
+			PreparedStatement prep = con.prepareStatement(query);
+			
+			try {
+				ResultSet rs = prep.executeQuery();
+				final ResultSetMetaData meta = rs.getMetaData();
+				
+				//making a list of the column names
+			    int columnCount = meta.getColumnCount();
+			    System.out.println("columnCount: " + columnCount);
+			    String[] columnNames = new String[columnCount];
+			    
+			    for(int i = 1; i <= columnCount; i++) {
+			    	columnNames[i-1] = meta.getColumnName(i);
+			    	System.out.println(columnNames[i-1]);
+			    }
+				
+			    //grabs all the cells of the table
+				String[][] data = new String [20][columnCount]; //hard-coded for a max of 50 rows for now
+				int rowCount = 0;
+				while (rs.next()) {
+					System.out.print(", currRow: " + rowCount);
+					for (int i = 1; i <= columnCount; i++) {
+						data[rowCount][i-1] = (rs.getString(i));
+					}
+					rowCount++;
+				}
+				
+				//trims off the unused space in the data so printing is cleaner
+				String[][] dataTrimmed = new String [rowCount][columnCount]; 
+				for(int i = 0; i < rowCount; i++) {
+					for (int j = 1; j <= columnCount; j++) {
+						dataTrimmed[i][j-1] = data[i][j-1];
+					}
+				}
+				
+				//making the table from the collected data from the SQL query
+				
+				JTable table = new JTable(dataTrimmed, columnNames);
+				table.setBounds(30, 40, 700, 450);
+				
+				panel.setLayout(new BorderLayout());
+				panel.add(table);
+				panel.add(table.getTableHeader(), BorderLayout.NORTH);
+				panel.add(table, BorderLayout.CENTER);
+				panel.add(back, BorderLayout.SOUTH);
+				
+				 // adding it to JScrollPane
+		        JScrollPane scrollPane = new JScrollPane(panel);
+		        frame.add(scrollPane);
+		     
+				
+				ActionListener backButton = new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						frame.dispose();
+					}
+				};
+
+				back.addActionListener(backButton);
+
+			} catch (SQLException sqle) {
+				System.err.println(sqle.getMessage());
+			}
+
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+					
+		frame.add(panel);
+		frame.setVisible(true);
+		
+	}
+};
+
 public static ActionListener viewCustomers = new ActionListener() {
 
 	@Override
